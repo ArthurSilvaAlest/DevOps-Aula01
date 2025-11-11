@@ -9,9 +9,6 @@ jobs:
   build-and-push:
     if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    env:
-      IMAGE_NAMESPACE: ${{ secrets.DOCKERHUB_NAMESPACE }}
-      TAG: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,8 +27,8 @@ jobs:
           context: ./SiteWebAPI
           push: true
           tags: |
-            ${{ env.IMAGE_NAMESPACE }}/sitewebapi:latest
-            ${{ env.IMAGE_NAMESPACE }}/sitewebapi:${{ env.TAG }}
+            ${{ secrets.DOCKERHUB_NAMESPACE }}/sitewebapi:latest
+            ${{ secrets.DOCKERHUB_NAMESPACE }}/sitewebapi:${{ github.sha }}
 
       - name: Build & Push UI
         uses: docker/build-push-action@v6
@@ -39,5 +36,5 @@ jobs:
           context: ./SiteWebUI
           push: true
           tags: |
-            ${{ env.IMAGE_NAMESPACE }}/sitewebui:latest
-            ${{ env.IMAGE_NAMESPACE }}/sitewebui:${{ env.TAG }}
+            ${{ secrets.DOCKERHUB_NAMESPACE }}/sitewebui:latest
+            ${{ secrets.DOCKERHUB_NAMESPACE }}/sitewebui:${{ github.sha }}
