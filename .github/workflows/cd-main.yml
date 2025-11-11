@@ -1,15 +1,13 @@
 name: CD - Main
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
     types: [ closed ]
 
 jobs:
   build-and-push:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
       IMAGE_NAMESPACE: ${{ secrets.DOCKERHUB_NAMESPACE }}
