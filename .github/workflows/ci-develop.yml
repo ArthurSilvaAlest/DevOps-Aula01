@@ -5,7 +5,7 @@ on:
     branches: [ "develop" ]
 
 jobs:
-  test-frontend:
+  build-frontend:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -15,10 +15,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm run build
+          cache: 'npm'
+          cache-dependency-path: SiteWebUI/package-lock.json
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+      - name: Build
+        run: npm run build
 
-  test-backend:
+  build-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,6 +33,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
+          cache: 'npm'
+          cache-dependency-path: SiteWebAPI/package-lock.json
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
       - name: Basic server check
-        run: node -e "require('fs').accessSync('src/server.js')"
+        run: node -e "require('fs').accessSync('src/server.js'); console.log('server.js ok')"
