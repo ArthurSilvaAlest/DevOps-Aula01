@@ -1,0 +1,42 @@
+services:
+  api:
+    image: arthursilvaalest/sitewebapi:latest
+    container_name: siteweb_api
+    environment:
+      PORT: 5000
+      CLIENT_URL: http://localhost:8081
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: senha123
+      PGDATABASE: siteweb
+    ports:
+      - "5007:5000"
+    depends_on:
+      - db
+
+  ui:
+    image: arthursilvaalest/sitewebui:latest
+    container_name: siteweb_ui
+    depends_on:
+      - api
+    ports:
+      - "8081:80"
+    volumes:
+      - ./SiteWebUI/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  db:
+    image: postgres:16-alpine
+    container_name: siteweb_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha123
+      POSTGRES_DB: siteweb
+    ports:
+      - "5442:5432"
+    volumes:
+      - pgdata_compose:/var/lib/postgresql/data
+      - ./SiteWebAPI/sql:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  pgdata_compose:
