@@ -21,7 +21,11 @@ related_docs: ["GLOBAL_RULES.md", "docker-compose.yml"]
 
 > **Versão 2.0** - Documentação completa seguindo padrões enterprise (Global Rules v12.0)
 
-## 🎯 Visão Geral do projeto aula devops
+## 🎯 Visão Geral
+
+Aula DevOps 01 
+
+Alest
 
 **SiteWeb** é uma aplicação web moderna para **captura e gestão de leads** sobre DevOps, construída com arquitetura de 3 camadas:
 
