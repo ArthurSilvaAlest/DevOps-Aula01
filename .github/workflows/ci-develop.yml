@@ -20,6 +20,8 @@ jobs:
       - name: Install deps
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+      - name: Lint (Zero Warnings)
+        run: npm run lint -- --max-warnings=0
       - name: Build
         run: npm run build
 
@@ -40,3 +42,26 @@ jobs:
           if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
       - name: Basic server check
         run: node -e "require('fs').accessSync('src/server.js'); console.log('server.js ok')"
+      - name: Start API (background)
+        run: |
+          PORT=5010 \
+          CLIENT_URL=http://localhost:8081 \
+          PGHOST=127.0.0.1 \
+          PGUSER=postgres \
+          PGPASSWORD=password \
+          PGDATABASE=siteweb \
+          PGPORT=5432 \
+          node src/server.js &
+          echo $! > api.pid
+          # aguarda API subir
+          sleep 3
+      - name: Health check
+        run: |
+          set -e
+          RESPONSE=$(curl -sSf http://localhost:5010/api/health)
+          echo "$RESPONSE"
+          echo "$RESPONSE" | grep -q '"status"\s*:\s*"ok"'
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f api.pid ]; then kill $(cat api.pid) || true; fi
